@@ -3,10 +3,12 @@
 var http = require('http');
 var PouchDB = require('../../packages/node_modules/pouchdb-for-coverage');
 var should = require("chai").should();
+var nodeFetch = require('node-fetch');
 
 describe('test.ajax.js', function () {
 
   it('#6815 ajax uses cookies', function (done) {
+    debugger;
     var server = http.createServer(function (req, res) {
       if (req.url === '/install-cookie') {
         res.writeHead(200, {'Set-Cookie': 'Test=test; Version=1; Path=/; HttpOnly'});
@@ -16,8 +18,8 @@ describe('test.ajax.js', function () {
       }
     });
     server.listen(6000, function () {
-      PouchDB.fetch('http://127.0.0.1:6000/install-cookie').then(function () {
-        return PouchDB.fetch('http://127.0.0.1:6000/check-cookie');
+      PouchDB.fetch('http://127.0.0.1:6000/install-cookie', { headers: new nodeFetch.Headers({'X-test': 'test'}) }).then(function () {
+        return PouchDB.fetch('http://127.0.0.1:6000/check-cookie', { headers: new nodeFetch.Headers({'X-test': 'test'}) });
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
